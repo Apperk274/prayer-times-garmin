@@ -1,0 +1,21 @@
+<strings>
+    <!-- On-watch text lives in source/L10n.mc so the language can be chosen
+         in settings. These strings are for the manifest and the phone-side
+         settings editor, which follow the device/phone language. -->
+    <string id="AppName" scope="glance">Prayer Times</string>
+
+    <string id="Location" scope="settings">Location</string>
+    <string id="LocationAuto" scope="settings">Current location</string>
+    <string id="LocationCustom" scope="settings">Custom</string>
+    <string id="LocationHint" scope="settings">Current location uses the watch's last known position or the phone's weather location, whichever is fresher; press START in the widget for a fresh GPS fix.</string>
+    <string id="CustomLat" scope="settings">Custom latitude</string>
+    <string id="CustomLon" scope="settings">Custom longitude</string>
+    <string id="CustomName" scope="settings">Custom location name</string>
+    <string id="CustomHint" scope="settings">Used when Location is set to Custom. Decimal degrees, e.g. 41.016 and 29.096.</string>
+    <string id="CalcMethod" scope="settings">Calculation method</string>
+    <string id="Madhab" scope="settings">Asr method</string>
+    <string id="MadhabStandard" scope="settings">Standard (Shafi, Maliki, Hanbali)</string>
+    <string id="MadhabHanafi" scope="settings">Hanafi</string>
+    <string id="Language" scope="settings">Language</string>
+    <string id="LanguageDevice" scope="settings">Device language</string>
+</strings>

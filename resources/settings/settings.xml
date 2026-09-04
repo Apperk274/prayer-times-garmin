@@ -1,0 +1,60 @@
+<settings>
+    <setting propertyKey="@Properties.location" title="@Strings.Location" prompt="@Strings.LocationHint">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.LocationAuto</listEntry>
+            <listEntry value="1">Istanbul</listEntry>
+            <listEntry value="2">Ankara</listEntry>
+            <listEntry value="3">İzmir</listEntry>
+            <listEntry value="4">Mecca</listEntry>
+            <listEntry value="5">Medina</listEntry>
+            <listEntry value="6">London</listEntry>
+            <listEntry value="7">New York</listEntry>
+            <listEntry value="8">@Strings.LocationCustom</listEntry>
+        </settingConfig>
+    </setting>
+
+    <setting propertyKey="@Properties.customLat" title="@Strings.CustomLat" prompt="@Strings.CustomHint">
+        <settingConfig type="numeric" min="-90" max="90"/>
+    </setting>
+    <setting propertyKey="@Properties.customLon" title="@Strings.CustomLon" prompt="@Strings.CustomHint">
+        <settingConfig type="numeric" min="-180" max="180"/>
+    </setting>
+    <setting propertyKey="@Properties.customName" title="@Strings.CustomName">
+        <settingConfig type="alphaNumeric" maxLength="24"/>
+    </setting>
+
+    <setting propertyKey="@Properties.method" title="@Strings.CalcMethod">
+        <settingConfig type="list">
+            <listEntry value="0">Diyanet (Türkiye)</listEntry>
+            <listEntry value="1">Muslim World League</listEntry>
+            <listEntry value="2">ISNA (North America)</listEntry>
+            <listEntry value="3">Umm al-Qura (Makkah)</listEntry>
+            <listEntry value="4">Egyptian General Authority</listEntry>
+            <listEntry value="5">University of Islamic Sciences, Karachi</listEntry>
+            <listEntry value="6">Moonsighting Committee</listEntry>
+            <listEntry value="7">Kuwait</listEntry>
+            <listEntry value="8">Qatar</listEntry>
+            <listEntry value="9">Singapore (MUIS)</listEntry>
+            <listEntry value="10">UOIF (France)</listEntry>
+            <listEntry value="11">Dubai</listEntry>
+        </settingConfig>
+    </setting>
+
+    <setting propertyKey="@Properties.madhab" title="@Strings.Madhab">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.MadhabStandard</listEntry>
+            <listEntry value="1">@Strings.MadhabHanafi</listEntry>
+        </settingConfig>
+    </setting>
+
+    <setting propertyKey="@Properties.language" title="@Strings.Language">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.LanguageDevice</listEntry>
+            <listEntry value="1">English</listEntry>
+            <listEntry value="2">Türkçe</listEntry>
+            <listEntry value="3">Русский</listEntry>
+            <listEntry value="4">Español</listEntry>
+            <listEntry value="5">Français</listEntry>
+        </settingConfig>
+    </setting>
+</settings>

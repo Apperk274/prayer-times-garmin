@@ -1,0 +1,13 @@
+<properties>
+    <!-- Model.LOC_*: 0 auto, 1 Istanbul, 2 Ankara, 3 İzmir, 4 Mecca, 5 Medina, 6 London, 7 New York, 8 custom -->
+    <property id="location" type="number">0</property>
+    <property id="customLat" type="float">0.0</property>
+    <property id="customLon" type="float">0.0</property>
+    <property id="customName" type="string"></property>
+    <!-- Methods.*: 0 Diyanet ... 11 Dubai, same order as the desktop app -->
+    <property id="method" type="number">0</property>
+    <!-- PrayerCalc.MADHAB_*: 0 standard, 1 Hanafi -->
+    <property id="madhab" type="number">0</property>
+    <!-- L10n.*: 0 device language, 1 en, 2 tr, 3 ru, 4 es, 5 fr -->
+    <property id="language" type="number">0</property>
+</properties>

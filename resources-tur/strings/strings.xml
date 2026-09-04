@@ -1,0 +1,18 @@
+<strings>
+    <string id="AppName" scope="glance">Namaz Vakitleri</string>
+
+    <string id="Location" scope="settings">Konum</string>
+    <string id="LocationAuto" scope="settings">Mevcut konum</string>
+    <string id="LocationCustom" scope="settings">Özel</string>
+    <string id="LocationHint" scope="settings">Mevcut konum, saatin son bilinen konumunu veya telefonun hava durumu konumunu (hangisi daha yeniyse) kullanır; yeni GPS konumu için widget içinde START'a basın.</string>
+    <string id="CustomLat" scope="settings">Özel enlem</string>
+    <string id="CustomLon" scope="settings">Özel boylam</string>
+    <string id="CustomName" scope="settings">Özel konum adı</string>
+    <string id="CustomHint" scope="settings">Konum "Özel" seçiliyken kullanılır. Ondalık derece, ör. 41.016 ve 29.096.</string>
+    <string id="CalcMethod" scope="settings">Hesaplama yöntemi</string>
+    <string id="Madhab" scope="settings">İkindi hesabı</string>
+    <string id="MadhabStandard" scope="settings">Standart (Şafii, Maliki, Hanbeli)</string>
+    <string id="MadhabHanafi" scope="settings">Hanefi</string>
+    <string id="Language" scope="settings">Dil</string>
+    <string id="LanguageDevice" scope="settings">Cihaz dili</string>
+</strings>
