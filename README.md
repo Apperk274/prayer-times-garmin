@@ -11,8 +11,8 @@ glance:     İkindi 17:13
             ████████████░░░░░░░░      ← progress from the previous prayer
             2 sa 14 dk sonra
 
-full view:        Ümraniye              (UP/DOWN: tomorrow, the day after)
-                 Per 4 Eyl
+full view:        Ümraniye        (UP/DOWN: tomorrow, day after, qibla)
+                   Bugün
               İmsak       04:51
               Güneş       06:31
               Öğle        13:11
@@ -38,6 +38,9 @@ reproduces every one of them to the second (see *Verifying* below).
   for tomorrow and the day after. The next prayer is highlighted on
   whichever page it falls, so after Yatsı the highlight sits on tomorrow's
   İmsak.
+- **Qibla compass** as the fourth page: a compass rose that turns with the
+  watch heading, an arrow to the Kaaba (green when you are within 5°), the
+  bearing in degrees and the great-circle distance.
 - **Location**: current location (the watch's last known position or the
   phone's weather location, whichever is fresher, polled while the widget
   is open; press START in the full view for a fresh GPS fix). The header
@@ -159,6 +162,7 @@ Two layers, because Monkey C only runs inside the simulator:
 
 | File | Purpose |
 |---|---|
+| `source/Qibla.mc` | bearing and distance to the Kaaba |
 | `source/PrayerCalc.mc` | the astronomy: adhan port, Double throughout, returns UTC epoch seconds |
 | `source/Methods.mc` | the 12 method presets (angles, intervals, minute offsets) |
 | `source/Model.mc` | settings, location resolution, today/tomorrow schedule with cache, formatting |

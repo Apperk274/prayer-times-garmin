@@ -1,20 +1,28 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
+import Toybox.Sensor;
+import Toybox.System;
 import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.Timer;
 import Toybox.WatchUi;
 
 // Full view: one page per day (today and the next two), each an imsakiye
-// table with the date on top. The row matching the next prayer is
-// highlighted on whichever page it falls. Geometry is relative to the
-// screen size so it fits any round display.
+// table with the date on top, then a Qibla compass page. The row matching
+// the next prayer is highlighted on whichever page it falls. Geometry is
+// relative to the screen size so it fits any round display.
 class PrayerView extends WatchUi.View {
 
-    const PAGES = 3;
+    const PAGES = 4;
+    const QIBLA_PAGE = 3;
+    // Redraw period: slow for the tables, fast while the compass is showing.
+    const TICK_MS = 10000;
+    const COMPASS_TICK_MS = 250;
 
     private var _timer as Timer.Timer?;
     private var _page as Number = 0;
+    private var _heading as Float? = null;
     var locationProvider as LocationProvider;
 
     function initialize() {
@@ -24,20 +32,52 @@ class PrayerView extends WatchUi.View {
 
     function onShow() as Void {
         refreshLocation();
-        _timer = new Timer.Timer();
-        (_timer as Timer.Timer).start(method(:onTick), 10000, true);
+        applyPageMode();
     }
 
     function onHide() as Void {
+        stopTimer();
+        setCompass(false);
+        locationProvider.stopGps();
+    }
+
+    private function stopTimer() as Void {
         if (_timer != null) {
             (_timer as Timer.Timer).stop();
             _timer = null;
         }
-        locationProvider.stopGps();
+    }
+
+    // Timer rate and compass power follow the page being shown.
+    private function applyPageMode() as Void {
+        stopTimer();
+        var compass = (_page == QIBLA_PAGE);
+        setCompass(compass);
+        _timer = new Timer.Timer();
+        (_timer as Timer.Timer).start(method(:onTick), compass ? COMPASS_TICK_MS : TICK_MS, true);
+    }
+
+    private function setCompass(on as Boolean) as Void {
+        if (on) {
+            Sensor.enableSensorEvents(method(:onSensor));
+        } else {
+            Sensor.enableSensorEvents(null);
+            _heading = null;
+        }
+    }
+
+    function onSensor(info as Sensor.Info) as Void {
+        if (info.heading != null) { _heading = info.heading; }
     }
 
     function onTick() as Void {
-        refreshLocation();
+        if (_page == QIBLA_PAGE) {
+            // Sensor events arrive at 1 Hz; getInfo often has a fresher value.
+            var info = Sensor.getInfo();
+            if (info.heading != null) { _heading = info.heading; }
+        } else {
+            refreshLocation();
+        }
         WatchUi.requestUpdate();
     }
 
@@ -49,11 +89,13 @@ class PrayerView extends WatchUi.View {
 
     function nextPage() as Void {
         _page = (_page + 1) % PAGES;
+        applyPageMode();
         WatchUi.requestUpdate();
     }
 
     function previousPage() as Void {
         _page = (_page + PAGES - 1) % PAGES;
+        applyPageMode();
         WatchUi.requestUpdate();
     }
 
@@ -91,12 +133,6 @@ class PrayerView extends WatchUi.View {
             return;
         }
 
-        var dayMoment = now.add(new Time.Duration(_page * Gregorian.SECONDS_PER_DAY));
-        var times = Model.dayTimes(dayMoment, loc);
-        var s = Model.schedule(now);
-        var nextAt = (s != null) ? s[:nextAt] as Number : -1;
-        var nowSec = now.value();
-
         // Place (and GPS status). Sits low enough on the round screen to
         // have ~65% of the width; anything longer is trimmed with "...".
         var header = loc[:name] as String;
@@ -107,6 +143,18 @@ class PrayerView extends WatchUi.View {
         dc.drawText(cx, h * 0.13, Graphics.FONT_XTINY,
             fit(dc, header, Graphics.FONT_XTINY, (w * 0.66).toNumber()),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+
+        if (_page == QIBLA_PAGE) {
+            drawQibla(dc, w, h, loc[:lat] as Double, loc[:lon] as Double);
+            drawPageDots(dc, w, h);
+            return;
+        }
+
+        var dayMoment = now.add(new Time.Duration(_page * Gregorian.SECONDS_PER_DAY));
+        var times = Model.dayTimes(dayMoment, loc);
+        var s = Model.schedule(now);
+        var nextAt = (s != null) ? s[:nextAt] as Number : -1;
+        var nowSec = now.value();
 
         // "Today", or the date of the future page ("Thu 4 Sep").
         var dateLine = (_page == 0) ? L10n.s(L10n.TODAY) : L10n.dateHeader(dayMoment);
@@ -139,7 +187,11 @@ class PrayerView extends WatchUi.View {
                 Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
         }
 
-        // Page dots.
+        drawPageDots(dc, w, h);
+    }
+
+    private function drawPageDots(dc as Dc, w as Number, h as Number) as Void {
+        var cx = w / 2;
         var dotY = h * 0.94;
         var gap = 12;
         var x0 = cx - gap * (PAGES - 1) / 2;
@@ -147,6 +199,88 @@ class PrayerView extends WatchUi.View {
             dc.setColor(p == _page ? Graphics.COLOR_WHITE : Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
             dc.fillCircle(x0 + p * gap, dotY, 3);
         }
+    }
+
+    // Compass rose rotated by the watch heading, with an arrow to the Kaaba.
+    // Without a compass reading the rose stays north-up, which still tells
+    // the bearing.
+    private function drawQibla(dc as Dc, w as Number, h as Number, lat as Double, lon as Double) as Void {
+        var cx = w / 2;
+        var cy = (h * 0.55).toNumber();
+        var radius = (w * 0.30).toNumber();
+
+        var qibla = Qibla.bearing(lat, lon);           // degrees from north
+        var headingDeg = 0.0d;
+        var hasCompass = (_heading != null);
+        if (hasCompass) { headingDeg = PrayerCalc.unwind(Qibla.deg((_heading as Float).toDouble())); }
+        // Screen angle of the arrow: clockwise from "up" on the display.
+        var rel = PrayerCalc.unwind(qibla - headingDeg);
+        var off = (rel > 180.0d) ? 360.0d - rel : rel;   // how far off we point
+        var aligned = hasCompass && off < 5.0d;
+
+        // Ring and ticks.
+        dc.setPenWidth(2);
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(cx, cy, radius);
+        for (var t = 0; t < 360; t += 30) {
+            var a = Qibla.rad(t.toDouble() - headingDeg);
+            var inner = (t % 90 == 0) ? radius - 12 : radius - 6;
+            dc.drawLine(cx + radius * Math.sin(a), cy - radius * Math.cos(a),
+                        cx + inner * Math.sin(a), cy - inner * Math.cos(a));
+        }
+        dc.setPenWidth(1);
+
+        // Cardinal letters, N in red.
+        var letters = [L10n.DIR_N, L10n.DIR_E, L10n.DIR_S, L10n.DIR_W];
+        for (var i = 0; i < 4; i++) {
+            var a = Qibla.rad(i * 90.0d - headingDeg);
+            var r = radius - 26;
+            dc.setColor(i == 0 ? Graphics.COLOR_RED : Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx + r * Math.sin(a), cy - r * Math.cos(a), Graphics.FONT_XTINY,
+                L10n.s(letters[i]), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
+
+        // Arrow to the Kaaba.
+        var a = Qibla.rad(rel);
+        var tipR = radius - 38;
+        var tailR = radius * 0.30;
+        var halfW = 14.0d;
+        var sinA = Math.sin(a);
+        var cosA = Math.cos(a);
+        var tipX = cx + tipR * sinA;
+        var tipY = cy - tipR * cosA;
+        var baseX = cx + (tipR - 30) * sinA;
+        var baseY = cy - (tipR - 30) * cosA;
+        // Perpendicular unit vector for the arrow head width.
+        var px = cosA;
+        var py = sinA;
+        dc.setColor(aligned ? Graphics.COLOR_GREEN : Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
+        dc.fillPolygon([
+            [tipX.toNumber(), tipY.toNumber()],
+            [(baseX + px * halfW).toNumber(), (baseY + py * halfW).toNumber()],
+            [(baseX - px * halfW).toNumber(), (baseY - py * halfW).toNumber()]
+        ]);
+        dc.setPenWidth(5);
+        dc.drawLine(cx - tailR * sinA, cy + tailR * cosA, baseX, baseY);
+        dc.setPenWidth(1);
+        dc.fillCircle(cx, cy, 5);
+
+        // Bearing and distance, or the missing-compass note.
+        var distKm = Qibla.distanceKm(lat, lon);
+        var distText;
+        if (System.getDeviceSettings().distanceUnits == System.UNIT_STATUTE) {
+            distText = Lang.format("$1$ mi", [(distKm * 0.621371d).toNumber()]);
+        } else {
+            distText = Lang.format("$1$ km", [distKm.toNumber()]);
+        }
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(cx, h * 0.215, Graphics.FONT_XTINY,
+            Lang.format("$1$ $2$°", [L10n.s(L10n.QIBLA), Math.round(qibla).toNumber()]),
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(cx, h * 0.875, Graphics.FONT_XTINY,
+            hasCompass ? distText : L10n.s(L10n.NO_COMPASS),
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     private function drawNoLocation(dc as Dc, w as Number, h as Number) as Void {
