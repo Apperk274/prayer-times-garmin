@@ -118,11 +118,28 @@ to check the rollover after Isha.
 
 ## Install on the watch
 
-Connect the watch by USB, and copy `bin/PrayerTimes.prg` into the watch's
-`GARMIN/APPS/` folder. The Forerunner 265 mounts as an MTP device, so on
-macOS use [OpenMTP](https://openmtp.ganeshrvel.com/) or Android File
-Transfer (Garmin Express also works). Disconnect, and the widget appears in
-the glance list (*Settings → Glances → Add* if it is not there already).
+Quickest: `brew install libmtp` once, then with the watch on USB (and
+OpenMTP closed, only one MTP client can hold the device):
+
+```sh
+./deploy.sh            # build for fr265s and push to GARMIN/Apps over MTP
+./deploy.sh fr965      # another device; extra args go to monkeyc
+```
+
+The script stamps the build with the short commit hash (`+` if the tree
+was dirty), shown as *Version* at the bottom of the on-watch settings menu
+(hold UP / MENU), so you can tell which build the watch is running.
+Plain `monkeyc` builds show `dev`.
+
+Manually: copy `bin/PrayerTimes.prg` into the watch's `GARMIN/APPS/`
+folder. The Forerunner 265 mounts as an MTP device, so on macOS use
+[OpenMTP](https://openmtp.ganeshrvel.com/) or Android File Transfer
+(Garmin Express also works). Disconnect, and the widget appears in the
+glance list (*Settings → Glances → Add* if it is not there already).
+
+There is no over-the-air path for sideloaded apps: a Connect IQ app cannot
+install or replace itself. The only remote channel is uploading a beta
+build to the Connect IQ store and installing it from the phone app.
 
 ## Verifying the calculation
 

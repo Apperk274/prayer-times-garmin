@@ -39,6 +39,9 @@ class PrayerDelegate extends WatchUi.BehaviorDelegate {
             madhabName(Model.madhab()), :madhab, null));
         menu.addItem(new WatchUi.MenuItem(L10n.s(L10n.LANGUAGE),
             L10n.languageName(Model.language()), :language, null));
+        // Read-only: which build is installed (short commit hash, set by deploy.sh).
+        menu.addItem(new WatchUi.MenuItem(L10n.s(L10n.VERSION),
+            WatchUi.loadResource(Rez.Strings.BuildVersion) as String, :version, null));
         WatchUi.pushView(menu, new SettingsMenuDelegate(), WatchUi.SLIDE_UP);
         return true;
     }

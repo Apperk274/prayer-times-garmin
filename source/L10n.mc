@@ -23,7 +23,7 @@ module L10n {
         TIME_LEFT_HM, TIME_LEFT_M,
         SETTINGS, LOCATION, CALC_METHOD, MADHAB, MADHAB_STANDARD, MADHAB_HANAFI,
         LOCATION_AUTO, LOCATION_CUSTOM, SELECTED, LANGUAGE, LANG_DEVICE, APP_NAME, TODAY,
-        QIBLA, NO_COMPASS, DIR_N, DIR_E, DIR_S, DIR_W
+        QIBLA, NO_COMPASS, DIR_N, DIR_E, DIR_S, DIR_W, VERSION
     }
 
     var _lang as Number = -1;
@@ -79,7 +79,7 @@ module L10n {
                 "Ayarlar", "Konum", "Hesaplama yöntemi", "İkindi hesabı",
                 "Standart (Şafii, Maliki, Hanbeli)", "Hanefi",
                 "Mevcut konum", "Özel", "Seçili", "Dil", "Cihaz dili", "Namaz Vakitleri", "Bugün",
-                "Kıble", "Pusula yok", "K", "D", "G", "B"];
+                "Kıble", "Pusula yok", "K", "D", "G", "B", "Sürüm"];
             case RU: return [
                 "Фаджр", "Восход", "Зухр", "Аср", "Магриб", "Иша",
                 "Нет местоположения", "Нажмите START для GPS", "GPS...",
@@ -88,7 +88,7 @@ module L10n {
                 "Настройки", "Местоположение", "Метод расчёта", "Расчёт Асра",
                 "Стандарт (Шафии, Малики, Ханбали)", "Ханафи",
                 "Текущее местоположение", "Своё", "Выбрано", "Язык", "Язык устройства", "Время намаза", "Сегодня",
-                "Кибла", "Нет компаса", "С", "В", "Ю", "З"];
+                "Кибла", "Нет компаса", "С", "В", "Ю", "З", "Версия"];
             case ES: return [
                 "Fajr", "Amanecer", "Dhuhr", "Asr", "Magrib", "Isha",
                 "Sin ubicación", "Pulsa START para GPS", "GPS...",
@@ -97,7 +97,7 @@ module L10n {
                 "Ajustes", "Ubicación", "Método de cálculo", "Método de Asr",
                 "Estándar (Shafi, Maliki, Hanbali)", "Hanafi",
                 "Ubicación actual", "Personalizada", "Seleccionado", "Idioma", "Idioma del dispositivo", "Horarios de oración", "Hoy",
-                "Alquibla", "Sin brújula", "N", "E", "S", "O"];
+                "Alquibla", "Sin brújula", "N", "E", "S", "O", "Versión"];
             case FR: return [
                 "Fajr", "Lever du soleil", "Dhohr", "Asr", "Maghreb", "Icha",
                 "Pas de position", "Appuyez sur START pour le GPS", "GPS...",
@@ -106,7 +106,7 @@ module L10n {
                 "Réglages", "Lieu", "Méthode de calcul", "Méthode pour l'Asr",
                 "Standard (Chaféite, Malikite, Hanbalite)", "Hanafite",
                 "Position actuelle", "Personnalisé", "Sélectionné", "Langue", "Langue de l'appareil", "Horaires de prière", "Aujourd'hui",
-                "Qibla", "Pas de boussole", "N", "E", "S", "O"];
+                "Qibla", "Pas de boussole", "N", "E", "S", "O", "Version"];
             default: return [
                 "Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha",
                 "No location", "Press START for GPS", "GPS...",
@@ -115,7 +115,7 @@ module L10n {
                 "Settings", "Location", "Calculation method", "Asr method",
                 "Standard (Shafi, Maliki, Hanbali)", "Hanafi",
                 "Current location", "Custom", "Selected", "Language", "Device language", "Prayer Times", "Today",
-                "Qibla", "No compass", "N", "E", "S", "W"];
+                "Qibla", "No compass", "N", "E", "S", "W", "Version"];
         }
     }
 

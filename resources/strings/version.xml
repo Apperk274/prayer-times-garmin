@@ -1,0 +1,6 @@
+<!-- Build identifier shown at the bottom of the settings menu.
+     "dev" in git; deploy.sh writes the short commit hash here for the
+     build and restores the file afterwards. -->
+<strings>
+    <string id="BuildVersion">dev</string>
+</strings>
